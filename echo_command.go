@@ -7,6 +7,15 @@ import (
 	"github.com/urfave/cli"
 )
 
+/*
+   TODO: Should commands have:
+   OnUsageError: func(context *Context, err error, isSubcommand bool) error {
+           return NewUsageErrorf(err.Error())
+   }
+
+  or just use the default?
+*/
+
 func NewEchoCommand(w io.Writer, options ...CommandOption) cli.Command {
 	cmd := cli.Command{
 		Name:            "echo",

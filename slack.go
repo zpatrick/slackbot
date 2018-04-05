@@ -2,6 +2,7 @@ package slackbot
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/nlopes/slack"
 )
@@ -286,4 +287,48 @@ func (s *DualSlackClient) GetIMHistory(channelID string, params slack.HistoryPar
 
 func (s *DualSlackClient) GetGroupHistory(channelID string, params slack.HistoryParameters) (*slack.History, error) {
 	return s.AppClient.GetGroupHistory(channelID, params)
+}
+
+// EscapeUser will add Slack's escape sequence to the userID.
+// Escaped Slack users are in the format "<@userID>"
+func EscapeUser(userID string) string {
+	return fmt.Sprintf("<@%s>", userID)
+}
+
+// todo
+func ParseEscapedUser(escaped string) (string, error) {
+	return "", nil
+}
+
+// EscapeChannel will add Slack's escape sequence to the channelID and channelName.
+// Escaped Slack channels are in the format "<#channelID|channelName>"
+func EscapeChannel(channelID, channelName string) string {
+	return fmt.Sprintf("<#%s|%s>", channelID, channelName)
+}
+
+// todo
+func ParseEscapedChannel(escaped string) (string, string, error) {
+	return "", "", nil
+}
+
+// EscapeLink will add Slack's escape sequence to the link and name (name is optional).
+// Escaped Slack links are in the format "<url>" or "<url|name>"
+func EscapeLink(url, name string) string {
+	return fmt.Sprintf("<#%s|%s>", url, name)
+}
+
+// todo
+func ParseEscapedLink(escaped string) (string, string, error) {
+	return "", "", nil
+}
+
+// EscapeEmail will add Slack's escape sequence to the email address and name.
+// Escaped Slack emails are in the format "<mailto:address|name>"
+func EscapeEmail(address, name string) string {
+	return fmt.Sprintf("<mailto:%s|%s>", address, name)
+}
+
+// todo
+func ParseEscapedEmail(escaped string) (string, string, error) {
+	return "", "", nil
 }
