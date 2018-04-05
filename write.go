@@ -20,3 +20,11 @@ func WriteString(w io.Writer, text string) error {
 func WriteStringf(w io.Writer, format string, tokens ...interface{}) error {
 	return WriteString(w, fmt.Sprintf(format, tokens...))
 }
+
+// WriterFunc is a function which satisfies the io.Writer interface
+type WriterFunc func(p []byte) (n int, err error)
+
+// Write will execute the WriterFunc
+func (w WriterFunc) Write(p []byte) (n int, err error) {
+	return w(p)
+}

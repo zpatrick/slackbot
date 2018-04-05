@@ -1,15 +1,23 @@
 package slackbot
 
 import (
+	"context"
+
 	"github.com/nlopes/slack"
 )
 
-func Run(incomingEvents chan slack.RTMEvent, behaviors []Behavior, run func(e slack.RTMEvent)) {
+// todo: is this even necessary?
+func Run(
+	incomingEvents chan slack.RTMEvent,
+	ctx context.Context,
+	behaviors []Behavior,
+	run func(ctx context.Context, e slack.RTMEvent),
+) {
 	for e := range incomingEvents {
 		for _, behavior := range behaviors {
-			behavior(e)
+			behavior(ctx, e)
 		}
 
-		run(e)
+		run(ctx, e)
 	}
 }

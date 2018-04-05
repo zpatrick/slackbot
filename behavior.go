@@ -1,5 +1,9 @@
 package slackbot
 
-import "github.com/nlopes/slack"
+import (
+	"context"
 
-type Behavior func(e slack.RTMEvent)
+	"github.com/nlopes/slack"
+)
+
+type Behavior func(ctx context.Context, e slack.RTMEvent) error
