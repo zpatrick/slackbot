@@ -252,3 +252,34 @@ type SlackClient interface {
 	UploadFile(params slack.FileUploadParameters) (file *slack.File, err error)
 	UploadFileContext(ctx context.Context, params slack.FileUploadParameters) (file *slack.File, err error)
 }
+
+// The DualSlackClient contains bot authentication and app authentication for Slack.
+// By default, the client executes slack api methods with bot authentication.
+// API methods that required user authentication execute with user authentication.
+// The DualSlackClient satisfies the SlackClient interface.
+type DualSlackClient struct {
+	*slack.Client
+	AppClient *slack.Client
+}
+
+// NewDualSlackClient creates a new instance of a DualSlackClient.
+// The appToken corresponds to the "OAuth Access Token" for you Slack application.
+// The botToken corresponds to the "Bot User OAuth Access Token" for you Slack application.
+func NewDualSlackClient(appToken, botToken string) *DualSlackClient {
+	return &DualSlackClient{
+		Client:    slack.New(botToken),
+		AppClient: slack.New(appToken),
+	}
+}
+
+func (s *DualSlackClient) GetChannelHistory(channelID string, params slack.HistoryParameters) (*slack.History, error) {
+	return s.AppClient.GetChannelHistory(channelID, params)
+}
+
+func (s *DualSlackClient) GetIMHistory(channelID string, params slack.HistoryParameters) (*slack.History, error) {
+	return s.AppClient.GetIMHistory(channelID, params)
+}
+
+func (s *DualSlackClient) GetGroupHistory(channelID string, params slack.HistoryParameters) (*slack.History, error) {
+	return s.AppClient.GetGroupHistory(channelID, params)
+}

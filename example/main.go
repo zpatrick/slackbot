@@ -14,24 +14,27 @@ import (
 )
 
 func main() {
-	token := flag.String("token", "", "Bot token for the Slack API")
+	appToken := flag.String("app-token", "", "App token for the Slack API")
+	botToken := flag.String("bot-token", "", "Bot token for the Slack API")
 	flag.Parse()
 
-	if *token == "" {
-		log.Fatal("token is required")
+	if *appToken == "" || *botToken == "" {
+		log.Fatal("Both --app-token and --bot-token are required")
 	}
-
-	client := slack.New(*token)
-	rtm := client.NewRTM()
-	defer rtm.Disconnect()
 
 	ctx := context.Background()
 	behaviors := []slackbot.Behavior{
 		slackbot.NewLogBehavior(),
 	}
 
+	client := slackbot.NewDualSlackClient(*appToken, *botToken)
+	rtm := client.NewRTM()
 	go rtm.ManageConnection()
+	defer rtm.Disconnect()
+
 	for e := range rtm.IncomingEvents {
+		info := rtm.GetInfo()
+
 		for _, behavior := range behaviors {
 			if err := behavior(ctx, e); err != nil {
 				log.Println(err.Error())
@@ -47,10 +50,12 @@ func main() {
 				continue
 			}
 
+			fmt.Println(data.Channel)
 			w := bytes.NewBuffer(nil)
 			app := cli.NewApp()
 			app.Name = "slackbot"
 			app.Commands = []cli.Command{
+				slackbot.NewDeleteCommand(client, info.User.ID, data.Channel),
 				slackbot.NewEchoCommand(w),
 			}
 			app.Writer = slackbot.WriterFunc(func(b []byte) (n int, err error) {
