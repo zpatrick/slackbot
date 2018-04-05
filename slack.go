@@ -276,6 +276,10 @@ func (s *DualSlackClient) GetChannelHistory(channelID string, params slack.Histo
 	return s.AppClient.GetChannelHistory(channelID, params)
 }
 
+func (s *DualSlackClient) GetConversationHistory(params *slack.GetConversationHistoryParameters) (*slack.GetConversationHistoryResponse, error) {
+	return s.AppClient.GetConversationHistory(params)
+}
+
 func (s *DualSlackClient) GetIMHistory(channelID string, params slack.HistoryParameters) (*slack.History, error) {
 	return s.AppClient.GetIMHistory(channelID, params)
 }

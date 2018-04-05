@@ -2,7 +2,6 @@ package slackbot
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/nlopes/slack"
 	"github.com/urfave/cli"
@@ -17,28 +16,18 @@ func NewDeleteCommand(client SlackClient, botID, channelID string, options ...Co
 		Usage: "delete the last message sent by the slackbot",
 		Flags: []cli.Flag{
 			cli.IntFlag{
-				Name:  "count",
+				Name:  "limit",
 				Usage: "number of messages to look back, between 1 and 1000",
 				Value: 100,
 			},
 		},
 		Action: func(c *cli.Context) error {
-			var getHistory func(string, slack.HistoryParameters) (*slack.History, error)
-			switch {
-			case strings.HasPrefix(channelID, "C"):
-				getHistory = client.GetChannelHistory
-			case strings.HasPrefix(channelID, "D"):
-				getHistory = client.GetIMHistory
-			case strings.HasPrefix(channelID, "G"):
-				getHistory = client.GetGroupHistory
-			default:
-				return fmt.Errorf("Cannot find channel type for '%s'", channelID)
+			params := &slack.GetConversationHistoryParameters{
+				ChannelID: channelID,
+				Limit:     c.Int("limit"),
 			}
 
-			params := slack.NewHistoryParameters()
-			params.Count = c.Int("count")
-
-			history, err := getHistory(channelID, params)
+			history, err := client.GetConversationHistory(params)
 			if err != nil {
 				return err
 			}
