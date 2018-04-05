@@ -12,7 +12,7 @@ func WithName(name string) CommandOption {
 	}
 }
 
-// WithName overwrites the command.ShortName field
+// WithShortName overwrites the command.ShortName field
 func WithShortName(shortName string) CommandOption {
 	return func(cmd cli.Command) cli.Command {
 		cmd.ShortName = shortName
@@ -133,7 +133,7 @@ func WithSkipFlagParsing(skipFlagParsing bool) CommandOption {
 }
 
 // WithSkipArgReorder overwrites the command.SkipArgReorder field
-func WithSkipFlagReorder(skipArgReorder bool) CommandOption {
+func WithSkipArgReorder(skipArgReorder bool) CommandOption {
 	return func(cmd cli.Command) cli.Command {
 		cmd.SkipArgReorder = skipArgReorder
 		return cmd
