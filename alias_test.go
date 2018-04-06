@@ -37,21 +37,17 @@ func TestAliasBehavior(t *testing.T) {
 			Assert: func(t *testing.T, e slack.RTMEvent) {},
 		},
 		"empty message event": {
-			Event:  slack.RTMEvent{Data: &slack.MessageEvent{}},
+			Event:  NewMessageRTMEvent(""),
 			Assert: func(t *testing.T, e slack.RTMEvent) {},
 		},
 		"foo replaced with bar": {
-			Event: slack.RTMEvent{Data: &slack.MessageEvent{
-				Msg: slack.Msg{Text: "foo"},
-			}},
+			Event: NewMessageRTMEvent("foo"),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
 				assert.Equal(t, "bar", e.Data.(*slack.MessageEvent).Text)
 			},
 		},
 		"alias with flag": {
-			Event: slack.RTMEvent{Data: &slack.MessageEvent{
-				Msg: slack.Msg{Text: "cmd arg0"},
-			}},
+			Event: NewMessageRTMEvent("cmd arg0"),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
 				assert.Equal(t, "cmd --flag arg0", e.Data.(*slack.MessageEvent).Text)
 			},

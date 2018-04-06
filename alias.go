@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// The AliasStore interface is used to read/write aliases to a persistent storage
+// The AliasStore interface is used to read/write aliases to persistent storage
 type AliasStore interface {
 	ReadAliases() (map[string]string, error)
 	WriteAliases(map[string]string) error
@@ -54,6 +54,10 @@ func NewAliasCommand(store AliasStore, w io.Writer, options ...CommandOption) cl
 					aliases, err := store.ReadAliases()
 					if err != nil {
 						return err
+					}
+
+					if len(aliases) == 0 {
+						return WriteString(w, "There are currently no aliases")
 					}
 
 					keys := make([]string, 0, len(aliases))

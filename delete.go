@@ -13,7 +13,7 @@ import (
 func NewDeleteCommand(client SlackClient, botID, channelID string, options ...CommandOption) cli.Command {
 	cmd := cli.Command{
 		Name:  "delete",
-		Usage: "delete the last message sent by the slackbot",
+		Usage: "delete the last message sent by the bot",
 		Flags: []cli.Flag{
 			cli.IntFlag{
 				Name:  "limit",

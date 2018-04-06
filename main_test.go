@@ -1,8 +1,10 @@
 package slackbot
 
 import (
+	"fmt"
 	"io/ioutil"
 
+	"github.com/nlopes/slack"
 	"github.com/urfave/cli"
 )
 
@@ -13,4 +15,16 @@ func NewTestApp(cmd cli.Command) *cli.App {
 	app.Writer = ioutil.Discard
 	app.ErrWriter = ioutil.Discard
 	return app
+}
+
+// NewMesageRTMEvent is a helper function that creates slack.RTMEvents with the formatted message
+func NewMessageRTMEvent(format string, tokens ...interface{}) slack.RTMEvent {
+	return slack.RTMEvent{
+		Type: "message",
+		Data: &slack.MessageEvent{
+			Msg: slack.Msg{
+				Text: fmt.Sprintf(format, tokens...),
+			},
+		},
+	}
 }
