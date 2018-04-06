@@ -7,23 +7,18 @@ import (
 	"github.com/urfave/cli"
 )
 
-/*
-   TODO: Should commands have:
-   OnUsageError: func(context *Context, err error, isSubcommand bool) error {
-           return NewUsageErrorf(err.Error())
-   }
-
-  or just use the default?
-*/
-
 func NewEchoCommand(w io.Writer, options ...CommandOption) cli.Command {
 	cmd := cli.Command{
-		Name:            "echo",
-		Usage:           "display the given message",
-		ArgsUsage:       "[args...]",
-		SkipFlagParsing: true,
+		Name:      "echo",
+		Usage:     "display the given message",
+		ArgsUsage: "[args...]",
+		//SkipFlagParsing: true,
 		Action: func(c *cli.Context) error {
 			text := strings.Join(c.Args(), " ")
+			if text == "" {
+				return NewUserInputErrorf("At least one argument is required")
+			}
+
 			return WriteString(w, text)
 		},
 	}
