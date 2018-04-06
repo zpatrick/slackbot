@@ -1,42 +1,39 @@
 package slackbot
 
 import (
+	"bytes"
 	"io/ioutil"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-/*
 func TestEcho(t *testing.T) {
-	cases := []struct {
-		Name     string
+	cases := map[string]struct {
 		Input    []string
 		Expected string
 	}{
-		{
-			Name:     "one arg",
+		"one arg": {
 			Input:    strings.Split("slackbot echo arg0", " "),
 			Expected: "arg0",
 		},
-		{
-			Name:     "two args",
+		"two args": {
 			Input:    strings.Split("slackbot echo arg0 arg1", " "),
 			Expected: "arg0 arg1",
 		},
-			{
-				Name:     "one flag",
-				Input:    strings.Split("slackbot echo --flag", " "),
-				Expected: "--flag",
-			},
-			{
-				Name:     "args and flags",
-				Input:    strings.Split("slackbot echo --flag arg0 arg1", " "),
-				Expected: "--flag arg0 arg1",
-			},
+		"one flag": {
+			Input:    strings.Split("slackbot echo --flag", " "),
+			Expected: "--flag",
+		},
+		"args and flags": {
+			Input:    strings.Split("slackbot echo --flag arg0 arg1", " "),
+			Expected: "--flag arg0 arg1",
+		},
 	}
 
-	for _, c := range cases {
-		t.Run(c.Name, func(t *testing.T) {
+	for name, c := range cases {
+		t.Run(name, func(t *testing.T) {
 			w := bytes.NewBuffer(nil)
 			cmd := NewEchoCommand(w)
 
@@ -48,18 +45,16 @@ func TestEcho(t *testing.T) {
 		})
 	}
 }
-*/
 
 func TestEchoUserInputErrors(t *testing.T) {
 	cases := map[string][]string{
-		//"no args": strings.Split("slackbot echo", " "),
-		"flag": strings.Split("slackbot echo --flag", " "),
+		"no args": strings.Split("slackbot echo", " "),
 	}
 
 	for name, input := range cases {
 		t.Run(name, func(t *testing.T) {
 			cmd := NewEchoCommand(ioutil.Discard)
-			if err, ok := NewTestApp(cmd).Run(input).(UserInputError); !ok {
+			if err, ok := NewTestApp(cmd).Run(input).(*UserInputError); !ok {
 				t.Fatal(err)
 			}
 		})

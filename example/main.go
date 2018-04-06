@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/nlopes/slack"
@@ -24,7 +25,7 @@ func main() {
 
 	ctx := context.Background()
 	behaviors := []slackbot.Behavior{
-		slackbot.NewLogBehavior(),
+		slackbot.NewLogBehavior(log.New(os.Stdout, "", 0)),
 	}
 
 	client := slackbot.NewDualSlackClient(*appToken, *botToken)
@@ -44,7 +45,7 @@ func main() {
 		case *slack.ConnectedEvent:
 			log.Printf("Slack connection successful!")
 		case *slack.InvalidAuthEvent:
-			return fmt.Errorf("Invalid auth token")
+			log.Fatal("Invalid auth token")
 		case *slack.MessageEvent:
 			text := data.Msg.Text
 			if !strings.HasPrefix(strings.ToLower(text), "slackbot ") {

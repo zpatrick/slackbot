@@ -273,18 +273,22 @@ func NewDualSlackClient(appToken, botToken string) *DualSlackClient {
 	}
 }
 
+// GetChannelHistory is called using the client's user credentials
 func (s *DualSlackClient) GetChannelHistory(channelID string, params slack.HistoryParameters) (*slack.History, error) {
 	return s.AppClient.GetChannelHistory(channelID, params)
 }
 
+// GetConversationHistory is called using the client's user credentials
 func (s *DualSlackClient) GetConversationHistory(params *slack.GetConversationHistoryParameters) (*slack.GetConversationHistoryResponse, error) {
 	return s.AppClient.GetConversationHistory(params)
 }
 
+// GetIMHistory is called using the client's user credentials
 func (s *DualSlackClient) GetIMHistory(channelID string, params slack.HistoryParameters) (*slack.History, error) {
 	return s.AppClient.GetIMHistory(channelID, params)
 }
 
+// GetGroupHIstory is called using the client's user credentials
 func (s *DualSlackClient) GetGroupHistory(channelID string, params slack.HistoryParameters) (*slack.History, error) {
 	return s.AppClient.GetGroupHistory(channelID, params)
 }

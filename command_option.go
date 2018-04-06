@@ -2,6 +2,7 @@ package slackbot
 
 import "github.com/urfave/cli"
 
+// A CommandOption manipulates a cli.Command
 type CommandOption func(cmd cli.Command) cli.Command
 
 // WithName overwrites the command.Name field

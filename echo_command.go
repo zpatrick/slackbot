@@ -7,12 +7,13 @@ import (
 	"github.com/urfave/cli"
 )
 
+// NewEchoCommand returns a cli.Command that writes user input into w.
 func NewEchoCommand(w io.Writer, options ...CommandOption) cli.Command {
 	cmd := cli.Command{
-		Name:      "echo",
-		Usage:     "display the given message",
-		ArgsUsage: "[args...]",
-		//SkipFlagParsing: true,
+		Name:            "echo",
+		Usage:           "display the given message",
+		ArgsUsage:       "[args...]",
+		SkipFlagParsing: true,
 		Action: func(c *cli.Context) error {
 			text := strings.Join(c.Args(), " ")
 			if text == "" {
