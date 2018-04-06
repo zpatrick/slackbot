@@ -34,7 +34,6 @@ func main() {
 
 	for e := range rtm.IncomingEvents {
 		info := rtm.GetInfo()
-
 		for _, behavior := range behaviors {
 			if err := behavior(ctx, e); err != nil {
 				log.Println(err.Error())
@@ -44,13 +43,14 @@ func main() {
 		switch data := e.Data.(type) {
 		case *slack.ConnectedEvent:
 			log.Printf("Slack connection successful!")
+		case *slack.InvalidAuthEvent:
+			return fmt.Errorf("Invalid auth token")
 		case *slack.MessageEvent:
 			text := data.Msg.Text
 			if !strings.HasPrefix(strings.ToLower(text), "slackbot ") {
 				continue
 			}
 
-			fmt.Println(data.Channel)
 			w := bytes.NewBuffer(nil)
 			app := cli.NewApp()
 			app.Name = "slackbot"
