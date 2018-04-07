@@ -38,8 +38,9 @@ func TestAliasBehavior(t *testing.T) {
 		},
 		"empty message event": {
 			Event:  NewMessageRTMEvent(""),
-			Assert: func(t *testing.T, e slack.RTMEvent) {},
-		},
+			Assert: func(t *testing.T, e slack.RTMEvent) {
+				assert.Equal(t, "", e.Data.(*slack.MessageEvent).Text)
+			},
 		"foo replaced with bar": {
 			Event: NewMessageRTMEvent("foo"),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
