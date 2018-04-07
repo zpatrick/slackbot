@@ -28,8 +28,6 @@ func (s InMemoryEventStore) WriteEvents(events map[string]slack.RTMEvent) error 
 	return nil
 }
 
-// todo: NewRepeatBehavior(store, func(m slack.MessageEvent) bool { return strings.HasPrefix(m.Text, "iqvbot ") })
-
 // NewRepeatBehavior creates a behavior that stores the last message event from each channel.
 // Events are only stored if shouldTrack returns true.
 func NewRepeatBehavior(store EventStore, shouldTrack func(slack.MessageEvent) bool) Behavior {
