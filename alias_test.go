@@ -11,19 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type TestAliasStore map[string]string
-
-func (s TestAliasStore) ReadAliases() (map[string]string, error) {
-	return s, nil
-}
-
-func (s TestAliasStore) WriteAliases(aliases map[string]string) error {
-	s = aliases
-	return nil
-}
-
 func TestAliasBehavior(t *testing.T) {
-	store := TestAliasStore{
+	store := InMemoryAliasStore{
 		"foo": "bar",
 		"cmd": "cmd --flag",
 	}
@@ -69,7 +58,7 @@ func TestAliasBehavior(t *testing.T) {
 }
 
 func TestAliasCommandList(t *testing.T) {
-	store := TestAliasStore{
+	store := InMemoryAliasStore{
 		"name0": "value0",
 		"name1": "value1",
 	}
@@ -88,7 +77,7 @@ func TestAliasCommandList(t *testing.T) {
 }
 
 func TestAliasCommandRemove(t *testing.T) {
-	store := TestAliasStore{
+	store := InMemoryAliasStore{
 		"name0": "value0",
 		"name1": "value1",
 	}
@@ -98,7 +87,7 @@ func TestAliasCommandRemove(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected := TestAliasStore{
+	expected := InMemoryAliasStore{
 		"name1": "value1",
 	}
 
@@ -111,7 +100,7 @@ func TestAliasCommandRemoveUserInputErrors(t *testing.T) {
 		"alias does not exist":  strings.Split("slackbot alias rm name", " "),
 	}
 
-	cmd := NewAliasCommand(TestAliasStore{}, ioutil.Discard)
+	cmd := NewAliasCommand(InMemoryAliasStore{}, ioutil.Discard)
 	app := NewTestApp(cmd)
 	for name, args := range cases {
 		t.Run(name, func(t *testing.T) {
@@ -121,7 +110,7 @@ func TestAliasCommandRemoveUserInputErrors(t *testing.T) {
 }
 
 func TestAliasCommandSet(t *testing.T) {
-	store := TestAliasStore{
+	store := InMemoryAliasStore{
 		"name0": "value0",
 		"name1": "value1",
 	}
@@ -131,7 +120,7 @@ func TestAliasCommandSet(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected := TestAliasStore{
+	expected := InMemoryAliasStore{
 		"name0": "updated",
 		"name1": "value1",
 	}
@@ -145,7 +134,7 @@ func TestAliasCommandSetUserInputErrors(t *testing.T) {
 		"missing VALUE argument": strings.Split("slackbot alias set name", " "),
 	}
 
-	cmd := NewAliasCommand(TestAliasStore{}, ioutil.Discard)
+	cmd := NewAliasCommand(InMemoryAliasStore{}, ioutil.Discard)
 	app := NewTestApp(cmd)
 	for name, args := range cases {
 		t.Run(name, func(t *testing.T) {

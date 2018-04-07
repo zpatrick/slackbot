@@ -51,12 +51,10 @@ func TestEchoUserInputErrors(t *testing.T) {
 		"no args": strings.Split("slackbot echo", " "),
 	}
 
-	for name, input := range cases {
+	app := NewTestApp(NewEchoCommand(ioutil.Discard))
+	for name, args := range cases {
 		t.Run(name, func(t *testing.T) {
-			cmd := NewEchoCommand(ioutil.Discard)
-			if err, ok := NewTestApp(cmd).Run(input).(*UserInputError); !ok {
-				t.Fatal(err)
-			}
+			assert.IsType(t, &UserInputError{}, app.Run(args))
 		})
 	}
 }

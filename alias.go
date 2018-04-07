@@ -17,6 +17,20 @@ type AliasStore interface {
 	WriteAliases(map[string]string) error
 }
 
+// The InMemoryAliasStore type is an adapter to allow the use of ordinary map[string]string as AliasStores.
+type InMemoryAliasStore map[string]string
+
+// ReadAliases is used to satisfy the AliasStore interface.
+func (s InMemoryAliasStore) ReadAliases() (map[string]string, error) {
+	return s, nil
+}
+
+// WriteAliases is used to satisfy the AliasStore interface.
+func (s InMemoryAliasStore) WriteAliases(aliases map[string]string) error {
+	s = aliases
+	return nil
+}
+
 // NewAliasBehavior creates a behavior that will replace messages' text with an alias.
 func NewAliasBehavior(store AliasStore) Behavior {
 	return func(ctx context.Context, e slack.RTMEvent) error {
@@ -39,9 +53,6 @@ func NewAliasBehavior(store AliasStore) Behavior {
 }
 
 // NewAliasCommand creates a command that allows users to create, list, and remove aliases.
-// alias set: set an alias
-// alias ls: lists aliases
-// alias rm: removes an alias
 func NewAliasCommand(store AliasStore, w io.Writer, options ...CommandOption) cli.Command {
 	cmd := cli.Command{
 		Name:  "alias",

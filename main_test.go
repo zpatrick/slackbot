@@ -17,13 +17,27 @@ func NewTestApp(cmd cli.Command) *cli.App {
 	return app
 }
 
-// NewMesageRTMEvent is a helper function that creates slack.RTMEvents with the formatted message
+// NewMesageRTMEvent is a helper function that creates a slack.RTMEvent with the formatted message
 func NewMessageRTMEvent(format string, tokens ...interface{}) slack.RTMEvent {
 	return slack.RTMEvent{
 		Type: "message",
 		Data: &slack.MessageEvent{
 			Msg: slack.Msg{
 				Text: fmt.Sprintf(format, tokens...),
+			},
+		},
+	}
+}
+
+// NewMesageChannelRTMEvent is a helper function that creates a slack.RTMEvent with the formatted message
+// and the specified channelID.
+func NewMessageChannelRTMEvent(channelID string, format string, tokens ...interface{}) slack.RTMEvent {
+	return slack.RTMEvent{
+		Type: "message",
+		Data: &slack.MessageEvent{
+			Msg: slack.Msg{
+				Channel: channelID,
+				Text:    fmt.Sprintf(format, tokens...),
 			},
 		},
 	}
