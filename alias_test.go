@@ -37,10 +37,11 @@ func TestAliasBehavior(t *testing.T) {
 			Assert: func(t *testing.T, e slack.RTMEvent) {},
 		},
 		"empty message event": {
-			Event:  NewMessageRTMEvent(""),
+			Event: NewMessageRTMEvent(""),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
 				assert.Equal(t, "", e.Data.(*slack.MessageEvent).Text)
 			},
+		},
 		"foo replaced with bar": {
 			Event: NewMessageRTMEvent("foo"),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
@@ -114,9 +115,7 @@ func TestAliasCommandRemoveUserInputErrors(t *testing.T) {
 	app := NewTestApp(cmd)
 	for name, args := range cases {
 		t.Run(name, func(t *testing.T) {
-			if err, ok := app.Run(args).(*UserInputError); !ok {
-				t.Fatalf("Error %#v is not *UserInputError!", err)
-			}
+			assert.IsType(t, &UserInputError{}, app.Run(args))
 		})
 	}
 }
@@ -150,9 +149,7 @@ func TestAliasCommandSetUserInputErrors(t *testing.T) {
 	app := NewTestApp(cmd)
 	for name, args := range cases {
 		t.Run(name, func(t *testing.T) {
-			if err, ok := app.Run(args).(*UserInputError); !ok {
-				t.Fatalf("Error %#v is not *UserInputError!", err)
-			}
+			assert.IsType(t, &UserInputError{}, app.Run(args))
 		})
 	}
 }
