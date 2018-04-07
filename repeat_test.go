@@ -33,10 +33,10 @@ func TestRepeatBehavior(t *testing.T) {
 	assert.Equal(t, expected, store)
 }
 
-func TestRepeatCommand(t *testing.T){
+func TestRepeatCommand(t *testing.T) {
 	t.Skip("TODO")
 }
 
-func TestRepeatCommandUserInputErrors(t *testing.T){
-        t.Skip("TODO")
+func TestRepeatCommandUserInputErrors(t *testing.T) {
+	t.Skip("TODO")
 }

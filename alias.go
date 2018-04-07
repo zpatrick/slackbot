@@ -13,11 +13,11 @@ import (
 
 // The AliasStore interface is used to read/write aliases to persistent storage
 type AliasStore interface {
-	ReadAliases() (map[string]string, error)
-	WriteAliases(map[string]string) error
+	ReadAliases() (aliases map[string]string, err error)
+	WriteAliases(aliases map[string]string) error
 }
 
-// The InMemoryAliasStore type is an adapter to allow the use of ordinary map[string]string as AliasStores.
+// The InMemoryAliasStore type is an adapter to allow the use of a map[string]string as an AliasStore.
 type InMemoryAliasStore map[string]string
 
 // ReadAliases is used to satisfy the AliasStore interface.
