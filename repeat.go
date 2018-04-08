@@ -56,7 +56,7 @@ func NewRepeatBehavior(store EventStore, shouldTrack func(slack.MessageEvent) bo
 }
 
 // NewRepeatCommand returns a cli.Command that sends the last event sent on the specified slack channel to ch.
-// It is recommended you pass in a *slack.RTM.IncomingEvents channel as ch.
+// It is recommended to pass in a *slack.RTM.IncomingEvents channel as ch.
 func NewRepeatCommand(store EventStore, channelID string, ch chan<- slack.RTMEvent, options ...CommandOption) cli.Command {
 	cmd := cli.Command{
 		Name:  "repeat",
