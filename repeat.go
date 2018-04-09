@@ -7,6 +7,11 @@ import (
 	"github.com/urfave/cli"
 )
 
+// NewRepeatCommand returns a cli.Command that sends the last message event sent on the specified slack channel to ch.
+// The first message to return true for isCommand will be used. 
+// It is recommended to pass in a *slack.RTM.IncomingEvents channel as ch.
+// WARNING: The client must be authenticated with both app credentials!
+// It is highly recommended you use a *DualSlackClient for this paramter.
 func NewRepeatCommand(
 	client SlackClient,
 	channelID string,
