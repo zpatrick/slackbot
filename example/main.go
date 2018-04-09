@@ -58,6 +58,9 @@ func main() {
 			app.Commands = []cli.Command{
 				slackbot.NewDeleteCommand(client, info.User.ID, data.Channel),
 				slackbot.NewEchoCommand(w),
+				slackbot.NewRepeatCommand(client, data.Channel, rtm.IncomingEvents, func(m slack.Message) bool {
+					return strings.HasPrefix(m.Text, "slackbot ") && !strings.HasPrefix(m.Text, "slackbot repeat")
+				}),
 			}
 			app.Writer = slackbot.WriterFunc(func(b []byte) (n int, err error) {
 				return w.Write(b)
