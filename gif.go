@@ -39,8 +39,8 @@ func NewGIFCommand(endpoint, key string, w io.Writer) cli.Command {
 			},
 			cli.IntFlag{
 				Name:  "limit",
-				Value: 1,
-				Usage: "limit number of results returned (max size 50)",
+				Value: 20,
+				Usage: "limit number of results to get from the Tenor API (max: 50)",
 			},
 			cli.BoolFlag{
 				Name:  "random",

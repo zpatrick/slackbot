@@ -21,7 +21,7 @@ func TestGIFCommandWithDefaults(t *testing.T) {
 		assert.Equal(t, "api_key", query.Get("key"))
 		assert.Equal(t, "dogs playing poker", query.Get("q"))
 		assert.Equal(t, "minimal", query.Get("mediafilter"))
-		assert.Equal(t, "1", query.Get("limit"))
+		assert.Equal(t, "20", query.Get("limit"))
 		assert.Equal(t, "strict", query.Get("safesearch"))
 
 		response := TenorSearchResponse{
