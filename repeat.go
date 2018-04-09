@@ -8,6 +8,14 @@ import (
 	"github.com/urfave/cli"
 )
 
+// TODO: Seems like using the same method as Delete would work here. 
+// I just incorporate shouldTrack func(slack.Message) bool and go through each message that way 
+
+
+
+
+
+
 // The EventStore interface is used to read/write slack.RTMEvents to persistent storage
 type EventStore interface {
 	ReadEvents() (events map[string]slack.RTMEvent, err error)
