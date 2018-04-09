@@ -9,6 +9,8 @@ import (
 	"github.com/urfave/cli"
 )
 
+// todo: long description about how aliases work and an example using them
+
 // NewAliasBehavior creates a behavior that will replace messages' text with an alias.
 func NewAliasBehavior(store KeyValStore) Behavior {
 	return func(ctx context.Context, e slack.RTMEvent) error {
@@ -32,10 +34,10 @@ func NewAliasBehavior(store KeyValStore) Behavior {
 
 // NewAliasCommand creates a command that allows users to add, list, and remove aliases.
 func NewAliasCommand(store KeyValStore, w io.Writer, options ...CommandOption) cli.Command {
-	options = append([]CommandOption{
-		WithName("alias"),
-		WithUsage("manage aliases"),
-	}, options...)
+	cmd := NewKVSCommand(store, w, WithName("alias"), WithUsage("manage aliases"))
+	for _, option := range options {
+		cmd = option(cmd)
+	}
 
-	return NewKVSCommand(store, w, options...)
+	return cmd
 }
