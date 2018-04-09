@@ -12,7 +12,7 @@ import (
 )
 
 func TestAliasBehavior(t *testing.T) {
-	store := InMemoryAliasStore{
+	store := InMemoryKeyValStore{
 		"foo": "bar",
 		"cmd": "cmd --flag",
 	}
@@ -46,8 +46,8 @@ func TestAliasBehavior(t *testing.T) {
 	}
 
 	b := NewAliasBehavior(store)
-	for name, c := range cases {
-		t.Run(name, func(t *testing.T) {
+	for key, c := range cases {
+		t.Run(key, func(t *testing.T) {
 			if err := b(context.Background(), c.Event); err != nil {
 				t.Fatal(err)
 			}
@@ -58,9 +58,9 @@ func TestAliasBehavior(t *testing.T) {
 }
 
 func TestAliasCommandList(t *testing.T) {
-	store := InMemoryAliasStore{
-		"name0": "value0",
-		"name1": "value1",
+	store := InMemoryKeyValStore{
+		"key0": "val0",
+		"key1": "val1",
 	}
 
 	w := bytes.NewBuffer(nil)
@@ -77,18 +77,18 @@ func TestAliasCommandList(t *testing.T) {
 }
 
 func TestAliasCommandRemove(t *testing.T) {
-	store := InMemoryAliasStore{
-		"name0": "value0",
-		"name1": "value1",
+	store := InMemoryKeyValStore{
+		"key0": "val0",
+		"key1": "val1",
 	}
 
 	cmd := NewAliasCommand(store, ioutil.Discard)
-	if err := NewTestApp(cmd).Run(strings.Split("slackbot alias rm name0", " ")); err != nil {
+	if err := NewTestApp(cmd).Run(strings.Split("slackbot alias rm key0", " ")); err != nil {
 		t.Fatal(err)
 	}
 
-	expected := InMemoryAliasStore{
-		"name1": "value1",
+	expected := InMemoryKeyValStore{
+		"key1": "val1",
 	}
 
 	assert.Equal(t, expected, store)
@@ -96,48 +96,60 @@ func TestAliasCommandRemove(t *testing.T) {
 
 func TestAliasCommandRemoveUserInputErrors(t *testing.T) {
 	cases := map[string][]string{
-		"missing NAME argument": strings.Split("slackbot alias rm", " "),
-		"alias does not exist":  strings.Split("slackbot alias rm name", " "),
+		"missing KEY argument": strings.Split("slackbot alias rm", " "),
+		"alias does not exist": strings.Split("slackbot alias rm key", " "),
 	}
 
-	cmd := NewAliasCommand(InMemoryAliasStore{}, ioutil.Discard)
+	cmd := NewAliasCommand(InMemoryKeyValStore{}, ioutil.Discard)
 	app := NewTestApp(cmd)
-	for name, args := range cases {
-		t.Run(name, func(t *testing.T) {
+	for key, args := range cases {
+		t.Run(key, func(t *testing.T) {
 			assert.IsType(t, &UserInputError{}, app.Run(args))
 		})
 	}
 }
 
-func TestAliasCommandSet(t *testing.T) {
-	store := InMemoryAliasStore{
-		"name0": "value0",
-		"name1": "value1",
+func TestAliasCommandAdd(t *testing.T) {
+	store := InMemoryKeyValStore{
+		"key0": "val0",
 	}
 
-	cmd := NewAliasCommand(store, ioutil.Discard)
-	if err := NewTestApp(cmd).Run(strings.Split("slackbot alias set name0 updated", " ")); err != nil {
-		t.Fatal(err)
+	cases := map[string][]string{
+		"add new entry":            strings.Split("slackbot alias add key1 val1", " "),
+		"overwrite existing entry": strings.Split("slackbot alias add --force key0 updated", " "),
 	}
 
-	expected := InMemoryAliasStore{
-		"name0": "updated",
-		"name1": "value1",
+	app := NewTestApp(NewAliasCommand(store, ioutil.Discard))
+	for name, args := range cases {
+		t.Run(name, func(t *testing.T) {
+			if err := app.Run(args); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+
+	expected := InMemoryKeyValStore{
+		"key0": "updated",
+		"key1": "val1",
 	}
 
 	assert.Equal(t, expected, store)
 }
 
-func TestAliasCommandSetUserInputErrors(t *testing.T) {
-	cases := map[string][]string{
-		"missing NAME argument":  strings.Split("slackbot alias set", " "),
-		"missing VALUE argument": strings.Split("slackbot alias set name", " "),
+func TestAliasCommandAddUserInputErrors(t *testing.T) {
+	store := InMemoryKeyValStore{
+		"key": "val",
 	}
 
-	cmd := NewAliasCommand(InMemoryAliasStore{}, ioutil.Discard)
-	app := NewTestApp(cmd)
-	for name, args := range cases {
-		t.Run(name, func(t *testing.T) {
+	cases := map[string][]string{
+		"missing KEY argument":      strings.Split("slackbot alias add", " "),
+		"missing VAL argument":      strings.Split("slackbot alias add key", " "),
+		"duplicate KEY w/o --force": strings.Split("slackbot alias add key val", " "),
+	}
+
+	app := NewTestApp(NewAliasCommand(store, ioutil.Discard))
+	for key, args := range cases {
+		t.Run(key, func(t *testing.T) {
 			assert.IsType(t, &UserInputError{}, app.Run(args))
 		})
 	}

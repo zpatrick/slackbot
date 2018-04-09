@@ -17,7 +17,7 @@ func NewDeleteCommand(client SlackClient, botID, channelID string, options ...Co
 		Flags: []cli.Flag{
 			cli.IntFlag{
 				Name:  "limit",
-				Usage: "number of messages to look back, between 1 and 1000",
+				Usage: "the number of messages to look back, between 1 and 1000",
 				Value: 100,
 			},
 		},
