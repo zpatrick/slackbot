@@ -23,7 +23,6 @@ func NewRepeatCommand(
 		Usage: "repeat the last command sent on this channel",
 		Flags: []cli.Flag{
 			cli.IntFlag{
-				Name:  "limit",
 				Usage: "the number of messages to look back, between 1 and 1000",
 				Value: 100,
 			},
