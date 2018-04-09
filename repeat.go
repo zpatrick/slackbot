@@ -11,7 +11,6 @@ import (
 // The first message to return true for isCommand will be used.
 // It is recommended to pass in a *slack.RTM.IncomingEvents channel as ch.
 // WARNING: The client must be authenticated with app credentials!
-// It is highly recommended to use a *DualSlackClient for this paramter.
 func NewRepeatCommand(
 	client SlackClient,
 	channelID string,
@@ -25,7 +24,7 @@ func NewRepeatCommand(
 		Flags: []cli.Flag{
 			cli.IntFlag{
 				Name:  "limit",
-				Usage: "number of messages to look back, between 1 and 1000",
+				Usage: "the number of messages to look back, between 1 and 1000",
 				Value: 100,
 			},
 		},
