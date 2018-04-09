@@ -65,7 +65,7 @@ func TestDefineCommandUserInputErrors(t *testing.T) {
 	defer server.Close()
 
 	cases := map[string][]string{
-		"missing INPUT":        strings.Split("slackbot define", " "),
+		"no args":              strings.Split("slackbot define", " "),
 		"definition not found": strings.Split("slackbot define ice cream", " "),
 	}
 
