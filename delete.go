@@ -9,7 +9,7 @@ import (
 
 // NewDeleteCommand retuns a command that deletes the last message sent by the specified bot on the specified channel.
 // WARNING: The client must be authenticated with both app and bot credentials!
-// It is highly recommended you use a *DualSlackClient for this paramter.
+// It is highly recommended to use a *DualSlackClient for this paramter.
 func NewDeleteCommand(client SlackClient, botID, channelID string, options ...CommandOption) cli.Command {
 	cmd := cli.Command{
 		Name:  "delete",
