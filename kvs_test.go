@@ -9,6 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// todo: TestWithLimitFlag
+// todo: TestWithAscendingFlag
 func TestKeyValCommandList(t *testing.T) {
 	store := InMemoryKeyValStore{
 		"key0": "val0",

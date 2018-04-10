@@ -37,6 +37,17 @@ func NewKVSCommand(store KeyValStore, w io.Writer, options ...CommandOption) cli
 			{
 				Name:  "ls",
 				Usage: "list entries in the store",
+				Flags: []cli.Flag{
+					cli.IntFlag{
+						Name:  "limit",
+						Value: 50,
+						Usage: "The maximum number of entries to display",
+					},
+					cli.BoolFlag{
+						Name:  "ascending",
+						Usage: "Show entries in reverse-alphabetical order",
+					},
+				},
 				Action: func(c *cli.Context) error {
 					kvs, err := store.ReadKeyValues()
 					if err != nil {
@@ -47,14 +58,20 @@ func NewKVSCommand(store KeyValStore, w io.Writer, options ...CommandOption) cli
 						return WriteString(w, "There are currently no entries in the store")
 					}
 
-					keys := make([]string, 0, len(kvs))
+					keys := make(sort.StringSlice, 0, len(kvs))
 					for k := range kvs {
 						keys = append(keys, k)
 					}
-					sort.Strings(keys)
+
+					if c.Bool("ascending") {
+						sort.Sort(sort.Reverse(keys))
+					} else {
+						sort.Strings(keys)
+					}
 
 					var text string
-					for _, key := range keys {
+					for i := 0; i < len(keys) && i < c.Int("limit"); i++ {
+						key := keys[i]
 						text += fmt.Sprintf("*%s*: %s\n", key, kvs[key])
 					}
 
