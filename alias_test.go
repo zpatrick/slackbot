@@ -99,9 +99,8 @@ func TestAliasCommandRemoveUserInputErrors(t *testing.T) {
 		"missing KEY argument": strings.Split("slackbot alias rm", " "),
 		"alias does not exist": strings.Split("slackbot alias rm key", " "),
 	}
-
-	cmd := NewAliasCommand(InMemoryKeyValStore{}, ioutil.Discard)
-	app := NewTestApp(cmd)
+	
+	app := NewTestApp(NewAliasCommand(InMemoryKeyValStore{}, ioutil.Discard))
 	for key, args := range cases {
 		t.Run(key, func(t *testing.T) {
 			assert.IsType(t, &UserInputError{}, app.Run(args))
