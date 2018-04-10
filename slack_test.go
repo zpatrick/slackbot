@@ -44,3 +44,17 @@ func TestParseUserIDErrors(t *testing.T) {
 		})
 	}
 }
+
+func TestEscapeUserID(t *testing.T) {
+	cases := map[string]string{
+		"":          "<@>",
+		"uid":       "<@uid>",
+		"IF903kvLS": "<@IF903kvLS>",
+	}
+
+	for input, expected := range cases {
+		t.Run(input, func(t *testing.T) {
+			assert.Equal(t, expected, EscapeUserID(input))
+		})
+	}
+}

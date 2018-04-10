@@ -18,3 +18,9 @@ func ParseUserID(escaped string) (string, error) {
 
 	return escaped[2 : len(escaped)-1], nil
 }
+
+// EscapeUserID adds Slack's user escape sequence to the userID,
+// e.g. "uid" becomes "<@uid>"
+func EscapeUserID(userID string) string {
+	return fmt.Sprintf("<@%s>", userID)
+}
