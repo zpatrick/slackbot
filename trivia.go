@@ -48,21 +48,21 @@ func (t TriviaQuestion) String() string {
 
 // The TriviaQuestionsStore interface is used to read/write trivia questions to persistent storage.
 // The key in the questions map is a slack channel ID.
-type TriviaQuestionStore interface {
-	ReadTriviaQuestions() (questions map[string]TriviaQuestion, err error)
-	WriteTriviaQuestions(questions map[string]TriviaQuestion) error
+type TriviaStore interface {
+	ReadQuestions() (questions map[string]TriviaQuestion, err error)
+	WriteQuestions(questions map[string]TriviaQuestion) error
 }
 
-// The InMemoryTriviaQuestionStore type is an adapter to allow the use of a map[string]TriviaQuestion as a TriviaQuestionStore.
-type InMemoryTriviaQuestionStore map[string]TriviaQuestion
+// The InMemoryTriviaStore type is an adapter to allow the use of a map[string]TriviaQuestion as a TriviaStore.
+type InMemoryTriviaStore map[string]TriviaQuestion
 
-// ReadTriviaQuestions is used to satisfy the TriviaQuestionStore interface.
-func (s InMemoryTriviaQuestionStore) ReadTriviaQuestions() (map[string]TriviaQuestion, error) {
+// ReadQuestions is used to satisfy the TriviaStore interface.
+func (s InMemoryTriviaStore) ReadQuestions() (map[string]TriviaQuestion, error) {
 	return s, nil
 }
 
-// WriteTriviaQuestions is used to satisfy the TriviaQuestionStore interface.
-func (s InMemoryTriviaQuestionStore) WriteTriviaQuestions(questions map[string]TriviaQuestion) error {
+// WriteTriviaQuestions is used to satisfy the TriviaStore interface.
+func (s InMemoryTriviaStore) WriteQuestions(questions map[string]TriviaQuestion) error {
 	s = questions
 	return nil
 }
@@ -70,7 +70,7 @@ func (s InMemoryTriviaQuestionStore) WriteTriviaQuestions(questions map[string]T
 // todo: for commands that require an endpoint like this, show the recommended default
 
 // NewTriviaCommand creates a command that allows users to answer, get, and show trivia questions for the specified channel.
-func NewTriviaCommand(store TriviaQuestionStore, endpoint string, channelID string, w io.Writer, options ...CommandOption) cli.Command {
+func NewTriviaCommand(store TriviaStore, endpoint string, channelID string, w io.Writer, options ...CommandOption) cli.Command {
 	client := rclient.NewRestClient(endpoint)
 	cmd := cli.Command{
 		Name:  "trivia",
@@ -86,7 +86,7 @@ func NewTriviaCommand(store TriviaQuestionStore, endpoint string, channelID stri
 						return NewUserInputError("Argument ANSWER is required")
 					}
 
-					questions, err := store.ReadTriviaQuestions()
+					questions, err := store.ReadQuestions()
 					if err != nil {
 						return err
 					}
@@ -143,13 +143,13 @@ func NewTriviaCommand(store TriviaQuestionStore, endpoint string, channelID stri
 						IncorrectAnswers: incorrectAnswers,
 					}
 
-					questions, err := store.ReadTriviaQuestions()
+					questions, err := store.ReadQuestions()
 					if err != nil {
 						return err
 					}
 
 					questions[channelID] = question
-					if err := store.WriteTriviaQuestions(questions); err != nil {
+					if err := store.WriteQuestions(questions); err != nil {
 						return err
 					}
 
@@ -160,7 +160,7 @@ func NewTriviaCommand(store TriviaQuestionStore, endpoint string, channelID stri
 				Name:  "show",
 				Usage: "show the current trivia question",
 				Action: func(c *cli.Context) error {
-					questions, err := store.ReadTriviaQuestions()
+					questions, err := store.ReadQuestions()
 					if err != nil {
 						return err
 					}
