@@ -46,8 +46,8 @@ func TestAliasBehavior(t *testing.T) {
 	}
 
 	b := NewAliasBehavior(store)
-	for key, c := range cases {
-		t.Run(key, func(t *testing.T) {
+	for name, c := range cases {
+		t.Run(name, func(t *testing.T) {
 			if err := b(context.Background(), c.Event); err != nil {
 				t.Fatal(err)
 			}
@@ -99,9 +99,8 @@ func TestAliasCommandRemoveUserInputErrors(t *testing.T) {
 		"missing KEY argument": strings.Split("slackbot alias rm", " "),
 		"alias does not exist": strings.Split("slackbot alias rm key", " "),
 	}
-
-	cmd := NewAliasCommand(InMemoryKeyValStore{}, ioutil.Discard)
-	app := NewTestApp(cmd)
+	
+	app := NewTestApp(NewAliasCommand(InMemoryKeyValStore{}, ioutil.Discard))
 	for key, args := range cases {
 		t.Run(key, func(t *testing.T) {
 			assert.IsType(t, &UserInputError{}, app.Run(args))
