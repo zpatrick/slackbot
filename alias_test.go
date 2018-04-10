@@ -46,8 +46,8 @@ func TestAliasBehavior(t *testing.T) {
 	}
 
 	b := NewAliasBehavior(store)
-	for key, c := range cases {
-		t.Run(key, func(t *testing.T) {
+	for name, c := range cases {
+		t.Run(name, func(t *testing.T) {
 			if err := b(context.Background(), c.Event); err != nil {
 				t.Fatal(err)
 			}
