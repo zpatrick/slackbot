@@ -3,8 +3,17 @@ package slackbot
 import (
 	"testing"
 
+	"github.com/nlopes/slack"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestSlackClientSatiesfiesInterface(t *testing.T) {
+	var _ SlackClient = &slack.Client{}
+}
+
+func TestDuelSlackClientSatiesfiesInterface(t *testing.T) {
+	var _ SlackClient = &DualSlackClient{}
+}
 
 func TestParseUserID(t *testing.T) {
 	cases := map[string]string{
