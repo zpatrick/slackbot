@@ -18,37 +18,58 @@ func TestAliasBehavior(t *testing.T) {
 	}
 
 	cases := map[string]struct {
+		B      Behavior
 		Event  slack.RTMEvent
 		Assert func(t *testing.T, e slack.RTMEvent)
 	}{
 		"non-message event": {
+			B: NewAliasBehavior(store, func(m *slack.MessageEvent) bool {
+				return true
+			}),
 			Event:  slack.RTMEvent{},
 			Assert: func(t *testing.T, e slack.RTMEvent) {},
 		},
 		"empty message event": {
+			B: NewAliasBehavior(store, func(m *slack.MessageEvent) bool {
+				return true
+			}),
 			Event: NewMessageRTMEvent(""),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
 				assert.Equal(t, "", e.Data.(*slack.MessageEvent).Text)
 			},
 		},
 		"foo replaced with bar": {
+			B: NewAliasBehavior(store, func(m *slack.MessageEvent) bool {
+				return true
+			}),
 			Event: NewMessageRTMEvent("foo"),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
 				assert.Equal(t, "bar", e.Data.(*slack.MessageEvent).Text)
 			},
 		},
 		"alias with flag": {
+			B: NewAliasBehavior(store, func(m *slack.MessageEvent) bool {
+				return true
+			}),
 			Event: NewMessageRTMEvent("cmd arg0"),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
 				assert.Equal(t, "cmd --flag arg0", e.Data.(*slack.MessageEvent).Text)
 			},
 		},
+		"do not alias when shouldProcess returns false": {
+			B: NewAliasBehavior(store, func(m *slack.MessageEvent) bool {
+				return false
+			}),
+			Event: NewMessageRTMEvent("foo"),
+			Assert: func(t *testing.T, e slack.RTMEvent) {
+				assert.Equal(t, "foo", e.Data.(*slack.MessageEvent).Text)
+			},
+		},
 	}
 
-	b := NewAliasBehavior(store)
 	for name, c := range cases {
 		t.Run(name, func(t *testing.T) {
-			if err := b(context.Background(), c.Event); err != nil {
+			if err := c.B(context.Background(), c.Event); err != nil {
 				t.Fatal(err)
 			}
 

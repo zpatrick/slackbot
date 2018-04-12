@@ -12,10 +12,14 @@ import (
 // todo: long description about how aliases work and an example using them
 
 // NewAliasBehavior creates a behavior that will replace messages' text with an alias.
-func NewAliasBehavior(store KeyValStore) Behavior {
+func NewAliasBehavior(store KeyValStore, shouldProcess func(m *slack.MessageEvent) bool) Behavior {
 	return func(ctx context.Context, e slack.RTMEvent) error {
 		m, ok := e.Data.(*slack.MessageEvent)
 		if !ok {
+			return nil
+		}
+
+		if !shouldProcess(m) {
 			return nil
 		}
 
