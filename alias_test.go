@@ -56,13 +56,13 @@ func TestAliasBehavior(t *testing.T) {
 				assert.Equal(t, "cmd --flag arg0", e.Data.(*slack.MessageEvent).Text)
 			},
 		},
-		"alias shouldProcess false": {
+		"do not alias when shouldProcess returns false": {
 			B: NewAliasBehavior(store, func(m *slack.MessageEvent) bool {
 				return false
 			}),
-			Event: NewMessageRTMEvent("slackbot alias foo"),
+			Event: NewMessageRTMEvent("foo"),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
-				assert.Equal(t, "slackbot alias foo", e.Data.(*slack.MessageEvent).Text)
+				assert.Equal(t, "foo", e.Data.(*slack.MessageEvent).Text)
 			},
 		},
 	}
