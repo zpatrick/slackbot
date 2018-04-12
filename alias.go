@@ -12,10 +12,14 @@ import (
 // todo: long description about how aliases work and an example using them
 
 // NewAliasBehavior creates a behavior that will replace messages' text with an alias.
-func NewAliasBehavior(store KeyValStore) Behavior {
+func NewAliasBehavior(store KeyValStore, shouldProcess func(m *slack.MessageEvent) bool) Behavior {
 	return func(ctx context.Context, e slack.RTMEvent) error {
 		m, ok := e.Data.(*slack.MessageEvent)
 		if !ok {
+			return nil
+		}
+
+		if !shouldProcess(m) {
 			return nil
 		}
 
@@ -33,7 +37,7 @@ func NewAliasBehavior(store KeyValStore) Behavior {
 }
 
 // NewAliasCommand creates a command that allows users to add, list, and remove aliases.
-func NewAliasCommand(store KeyValStore, w io.Writer, shouldProcess func(m *slack.MessageEvent) bool, options ...CommandOption) cli.Command {
+func NewAliasCommand(store KeyValStore, w io.Writer, options ...CommandOption) cli.Command {
 	cmd := NewKVSCommand(store, w, WithName("alias"), WithUsage("manage aliases"))
 	for _, option := range options {
 		cmd = option(cmd)
