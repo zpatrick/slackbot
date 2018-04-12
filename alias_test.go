@@ -64,7 +64,10 @@ func TestAliasCommandList(t *testing.T) {
 	}
 
 	w := bytes.NewBuffer(nil)
-	cmd := NewAliasCommand(store, w)
+	cmd := NewAliasCommand(store, w, func(m *slack.MessageEvent) bool {
+		return !strings.HasPrefix(m.Text, "slackbot alias")
+	})
+
 	if err := NewTestApp(cmd).Run(strings.Split("slackbot alias ls", " ")); err != nil {
 		t.Fatal(err)
 	}
@@ -82,7 +85,10 @@ func TestAliasCommandRemove(t *testing.T) {
 		"key1": "val1",
 	}
 
-	cmd := NewAliasCommand(store, ioutil.Discard)
+	cmd := NewAliasCommand(store, ioutil.Discard, func(m *slack.MessageEvent) bool {
+		return !strings.HasPrefix(m.Text, "slackbot alias")
+	})
+
 	if err := NewTestApp(cmd).Run(strings.Split("slackbot alias rm key0", " ")); err != nil {
 		t.Fatal(err)
 	}
@@ -100,7 +106,11 @@ func TestAliasCommandRemoveUserInputErrors(t *testing.T) {
 		"alias does not exist": strings.Split("slackbot alias rm key", " "),
 	}
 
-	app := NewTestApp(NewAliasCommand(InMemoryKeyValStore{}, ioutil.Discard))
+	cmd := NewAliasCommand(InMemoryKeyValStore{}, ioutil.Discard, func(m *slack.MessageEvent) bool {
+		return !strings.HasPrefix(m.Text, "slackbot alias")
+	})
+
+	app := NewTestApp(cmd)
 	for key, args := range cases {
 		t.Run(key, func(t *testing.T) {
 			assert.IsType(t, &UserInputError{}, app.Run(args))
@@ -118,7 +128,11 @@ func TestAliasCommandAdd(t *testing.T) {
 		"overwrite existing entry": strings.Split("slackbot alias add --force key0 updated", " "),
 	}
 
-	app := NewTestApp(NewAliasCommand(store, ioutil.Discard))
+	cmd := NewAliasCommand(store, ioutil.Discard, func(m *slack.MessageEvent) bool {
+		return !strings.HasPrefix(m.Text, "slackbot alias")
+	})
+
+	app := NewTestApp(cmd)
 	for name, args := range cases {
 		t.Run(name, func(t *testing.T) {
 			if err := app.Run(args); err != nil {
@@ -146,7 +160,11 @@ func TestAliasCommandAddUserInputErrors(t *testing.T) {
 		"duplicate KEY w/o --force": strings.Split("slackbot alias add key val", " "),
 	}
 
-	app := NewTestApp(NewAliasCommand(store, ioutil.Discard))
+	cmd := NewAliasCommand(store, ioutil.Discard, func(m *slack.MessageEvent) bool {
+		return !strings.HasPrefix(m.Text, "slackbot alias")
+	})
+
+	app := NewTestApp(cmd)
 	for key, args := range cases {
 		t.Run(key, func(t *testing.T) {
 			assert.IsType(t, &UserInputError{}, app.Run(args))

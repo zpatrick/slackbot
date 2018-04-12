@@ -33,7 +33,7 @@ func NewAliasBehavior(store KeyValStore) Behavior {
 }
 
 // NewAliasCommand creates a command that allows users to add, list, and remove aliases.
-func NewAliasCommand(store KeyValStore, w io.Writer, options ...CommandOption) cli.Command {
+func NewAliasCommand(store KeyValStore, w io.Writer, shouldProcess func(m *slack.MessageEvent) bool, options ...CommandOption) cli.Command {
 	cmd := NewKVSCommand(store, w, WithName("alias"), WithUsage("manage aliases"))
 	for _, option := range options {
 		cmd = option(cmd)
