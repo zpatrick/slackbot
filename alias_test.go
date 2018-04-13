@@ -14,7 +14,8 @@ import (
 func TestAliasBehavior(t *testing.T) {
 	store := InMemoryKeyValStore{
 		"foo": "bar",
-		"cmd": "cmd --flag",
+		"gif": "gif --random",
+		"x":   "delete",
 	}
 
 	cases := map[string]struct {
@@ -42,27 +43,45 @@ func TestAliasBehavior(t *testing.T) {
 			B: NewAliasBehavior(store, func(m *slack.MessageEvent) bool {
 				return true
 			}),
-			Event: NewMessageRTMEvent("foo"),
+			Event: NewMessageRTMEvent("slackbot foo"),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
-				assert.Equal(t, "bar", e.Data.(*slack.MessageEvent).Text)
+				assert.Equal(t, "slackbot bar", e.Data.(*slack.MessageEvent).Text)
 			},
 		},
-		"alias with flag": {
+		"gif replaced with gif --random": {
 			B: NewAliasBehavior(store, func(m *slack.MessageEvent) bool {
 				return true
 			}),
-			Event: NewMessageRTMEvent("cmd arg0"),
+			Event: NewMessageRTMEvent("slackbot gif cars"),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
-				assert.Equal(t, "cmd --flag arg0", e.Data.(*slack.MessageEvent).Text)
+				assert.Equal(t, "slackbot gif --random cars", e.Data.(*slack.MessageEvent).Text)
 			},
 		},
 		"do not alias when shouldProcess returns false": {
 			B: NewAliasBehavior(store, func(m *slack.MessageEvent) bool {
 				return false
 			}),
+			Event: NewMessageRTMEvent("slackbot foo"),
+			Assert: func(t *testing.T, e slack.RTMEvent) {
+				assert.Equal(t, "slackbot foo", e.Data.(*slack.MessageEvent).Text)
+			},
+		},
+		"do not alias when there is less than 2 args": {
+			B: NewAliasBehavior(store, func(m *slack.MessageEvent) bool {
+				return true
+			}),
 			Event: NewMessageRTMEvent("foo"),
 			Assert: func(t *testing.T, e slack.RTMEvent) {
 				assert.Equal(t, "foo", e.Data.(*slack.MessageEvent).Text)
+			},
+		},
+		"only alias the 2nd arg": {
+			B: NewAliasBehavior(store, func(m *slack.MessageEvent) bool {
+				return true
+			}),
+			Event: NewMessageRTMEvent("slackbot x example x y z"),
+			Assert: func(t *testing.T, e slack.RTMEvent) {
+				assert.Equal(t, "slackbot delete example x y z", e.Data.(*slack.MessageEvent).Text)
 			},
 		},
 	}

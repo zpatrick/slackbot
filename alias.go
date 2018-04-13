@@ -23,15 +23,25 @@ func NewAliasBehavior(store KeyValStore, shouldProcess func(m *slack.MessageEven
 			return nil
 		}
 
+		// only run aliases on the command portion of the text
+		args := strings.Split(m.Text, " ")
+		if len(args) < 2 {
+			return nil
+		}
+
 		aliases, err := store.ReadKeyValues()
 		if err != nil {
 			return err
 		}
 
-		for name, value := range aliases {
-			m.Text = strings.Replace(m.Text, name, value, -1)
+		key := args[1]
+		val, ok := aliases[key]
+		if !ok {
+			return nil
 		}
 
+		args[1] = val
+		m.Text = strings.Join(args, " ")
 		return nil
 	}
 }
