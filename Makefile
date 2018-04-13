@@ -3,7 +3,7 @@ deps:
 	go install github.com/golang/mock/mockgen
 
 mocks:
-	mockgen -package mock github.com/zpatrick/slackbot SlackClient > mock_slack/mock_slack_client.go
+	mockgen --package mock_slack github.com/zpatrick/slackbot SlackClient > mock_slack/mock_slack_client.go
 
 test:
 	go test ./... -v

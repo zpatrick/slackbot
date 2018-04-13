@@ -41,7 +41,7 @@ func NewDeleteCommand(client SlackClient, botID, channelID string, options ...Co
 			}
 
 			if lastMessageTimestamp == "" {
-				return fmt.Errorf("Failed to find last message sent by bot %s", botID)
+				return fmt.Errorf("Failed to find last message sent by this bot")
 			}
 
 			if _, _, err := client.DeleteMessage(channelID, lastMessageTimestamp); err != nil {
