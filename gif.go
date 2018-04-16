@@ -24,6 +24,8 @@ type TenorGIF struct {
 	URL string `json:"itemurl"`
 }
 
+// TODO: Add command options
+
 // NewGIFCommand returns a cli.Command that displays a gif using the Tenor API.
 // Key is your Tenor API key.
 func NewGIFCommand(endpoint, key string, w io.Writer) cli.Command {
