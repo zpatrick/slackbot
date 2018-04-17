@@ -134,7 +134,6 @@ func TestGIFCommandWithRandomFlag(t *testing.T) {
 		results[w.String()]++
 	}
 
-	// it seems reasonable to assume each URL will be returned at least once after 1000 iterations
 	assert.NotZero(t, results["one"])
 	assert.NotZero(t, results["two"])
 	assert.NotZero(t, results["three"])
