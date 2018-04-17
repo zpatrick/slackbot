@@ -1,7 +1,6 @@
 package slackbot
 
 import (
-	"context"
 	"io"
 	"strings"
 
@@ -13,7 +12,7 @@ import (
 
 // NewAliasBehavior creates a behavior that will replace messages' text with an alias.
 func NewAliasBehavior(store KeyValStore, shouldProcess func(m *slack.MessageEvent) bool) Behavior {
-	return func(ctx context.Context, e slack.RTMEvent) error {
+	return func(e slack.RTMEvent) error {
 		m, ok := e.Data.(*slack.MessageEvent)
 		if !ok {
 			return nil

@@ -2,7 +2,6 @@ package slackbot
 
 import (
 	"bytes"
-	"context"
 	"log"
 	"testing"
 
@@ -30,7 +29,7 @@ func TestLogBehavior(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			w := bytes.NewBuffer(nil)
 			b := NewLogBehavior(log.New(w, "", 0))
-			if err := b(context.Background(), c.Event); err != nil {
+			if err := b(c.Event); err != nil {
 				t.Fatal(err)
 			}
 

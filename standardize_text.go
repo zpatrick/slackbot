@@ -1,7 +1,6 @@
 package slackbot
 
 import (
-	"context"
 	"strings"
 
 	"github.com/nlopes/slack"
@@ -16,7 +15,7 @@ func NewStandardizeTextBehavior() Behavior {
 		"“", "\"",
 		"”", "\"")
 
-	return func(ctx context.Context, e slack.RTMEvent) error {
+	return func(e slack.RTMEvent) error {
 		m, ok := e.Data.(*slack.MessageEvent)
 		if !ok {
 			return nil

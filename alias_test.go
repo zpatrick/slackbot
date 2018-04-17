@@ -2,7 +2,6 @@ package slackbot
 
 import (
 	"bytes"
-	"context"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -88,7 +87,7 @@ func TestAliasBehavior(t *testing.T) {
 
 	for name, c := range cases {
 		t.Run(name, func(t *testing.T) {
-			if err := c.B(context.Background(), c.Event); err != nil {
+			if err := c.B(c.Event); err != nil {
 				t.Fatal(err)
 			}
 

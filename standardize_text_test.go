@@ -1,7 +1,6 @@
 package slackbot
 
 import (
-	"context"
 	"testing"
 
 	"github.com/nlopes/slack"
@@ -19,7 +18,7 @@ func TestStandardizeTextBehavior(t *testing.T) {
 	for input, expected := range cases {
 		t.Run(input, func(t *testing.T) {
 			e := NewMessageRTMEvent(input)
-			if err := b(context.Background(), e); err != nil {
+			if err := b(e); err != nil {
 				t.Fatal(err)
 			}
 

@@ -1,7 +1,6 @@
 package slackbot
 
 import (
-	"context"
 	"strings"
 
 	"github.com/nlopes/slack"
@@ -12,7 +11,7 @@ import (
 // This can be used to make it easier for users to execute commands.
 // For example, `NewExpandPromptBehavior("!", "slackbot ")` would convert `!echo foo` to `slackbot echo foo`.
 func NewExpandPromptBehavior(prompt, expanded string) Behavior {
-	return func(ctx context.Context, e slack.RTMEvent) error {
+	return func(e slack.RTMEvent) error {
 		m, ok := e.Data.(*slack.MessageEvent)
 		if !ok {
 			return nil
