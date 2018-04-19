@@ -46,16 +46,22 @@ func NewMessageChannelRTMEvent(channelID string, format string, tokens ...interf
 }
 
 // IsOrdered asserts that the specified objects are in specified order
-func IsOrdered(t *testing.T, input string, expected ...string) {
-	for _, e := range expected {
-		if strings.Index(input, e) < 0 {
-			t.Fatal(fmt.Sprintf("\n%s\ndoes not contain %s", input, e))
+func AssertContainsInOrder(t *testing.T, input string, expected ...string) {
+	for i := 0; i < len(expected); i++ {
+		previous := strings.Index(input, expected[i])
+		if previous < 0 {
+			t.Fatal(fmt.Sprintf("\n%s\ndoes not contain %s", input, previous))
 		}
-	}
 
-	for i := 0; i < len(expected)-1; i++ {
-		if strings.Index(input, expected[i]) > strings.Index(input, expected[i+1]) {
-			t.Fatal(fmt.Sprintf("\n%s\nindex out of order: %s comes after %s", input, expected[i], expected[i+1]))
+		if i < len(expected)-1 {
+			next := strings.Index(input, expected[i+1])
+			if next < 0 {
+				t.Fatal(fmt.Sprintf("\n%s\ndoes not contain %s", input, next))
+			}
+
+			if previous > next {
+				t.Fatal(fmt.Sprintf("\n%s\nindex out of order: %s comes after %s", input, previous, next))
+			}
 		}
 	}
 }
