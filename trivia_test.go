@@ -150,6 +150,32 @@ func TestTriviaNewWithDifficultyFlag(t *testing.T) {
 	}
 }
 
+func TestTriviaNewWithCategoryFlag(t *testing.T) {
+        handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+                query := r.URL.Query()
+                assert.Equal(t, "11", query.Get("category"))
+
+                response := OpenTDBResponse{
+                        Questions: make([]TriviaQuestion, 1),
+                }
+
+                b, err := json.Marshal(response)
+                if err != nil {
+                        t.Fatal(err)
+                }
+
+                w.Write(b)
+        })
+
+        server := httptest.NewServer(handler)
+        defer server.Close()
+
+        cmd := NewTriviaCommand(InMemoryTriviaStore{}, server.URL, "", ioutil.Discard)
+        if err := NewTestApp(cmd).Run(strings.Split("slackbot trivia new --category film", " ")); err != nil {
+                t.Fatal(err)
+        }
+}
+
 func TestTriviaShow(t *testing.T) {
 	t.Skip("TODO")
 }
