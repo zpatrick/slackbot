@@ -56,8 +56,8 @@ func TestKeyValCommandRemoveUserInputErrors(t *testing.T) {
 
 	cmd := NewKVSCommand(InMemoryKeyValStore{}, ioutil.Discard)
 	app := NewTestApp(cmd)
-	for key, args := range cases {
-		t.Run(key, func(t *testing.T) {
+	for name, args := range cases {
+		t.Run(name, func(t *testing.T) {
 			assert.IsType(t, &UserInputError{}, app.Run(args))
 		})
 	}
@@ -103,8 +103,8 @@ func TestKeyValCommandAddUserInputErrors(t *testing.T) {
 
 	cmd := NewKVSCommand(store, ioutil.Discard)
 	app := NewTestApp(cmd)
-	for key, args := range cases {
-		t.Run(key, func(t *testing.T) {
+	for name, args := range cases {
+		t.Run(name, func(t *testing.T) {
 			assert.IsType(t, &UserInputError{}, app.Run(args))
 		})
 	}

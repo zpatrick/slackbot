@@ -140,8 +140,8 @@ func TestAliasCommandRemoveUserInputErrors(t *testing.T) {
 	}
 
 	app := NewTestApp(NewAliasCommand(InMemoryKeyValStore{}, ioutil.Discard))
-	for key, args := range cases {
-		t.Run(key, func(t *testing.T) {
+	for name, args := range cases {
+		t.Run(name, func(t *testing.T) {
 			assert.IsType(t, &UserInputError{}, app.Run(args))
 		})
 	}
