@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/url"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/urfave/cli"
@@ -18,6 +19,33 @@ const OpenTDBAPIEndpoint = "https://opentdb.com/api.php"
 // OpenTDBResponse is the response type for GET / in the OpenTDB API
 type OpenTDBResponse struct {
 	Questions []TriviaQuestion `json:"results"`
+}
+
+func categoryCodes() map[string]int {
+	return map[string]int{
+		"general":     9,
+		"books":       10,
+		"film":        11,
+		"music":       12,
+		"theater":     13,
+		"tv":          14,
+		"video games": 15,
+		"board games": 16,
+		"science":     17,
+		"computers":   18,
+		"math":        19,
+		"mythology":   20,
+		"sports":      21,
+		"geography":   22,
+		"history":     23,
+		"politics":    24,
+		"art":         25,
+		"celebrities": 26,
+		"animals":     27,
+		"vehicles":    28,
+		"comics":      29,
+		"gadgets":     30,
+	}
 }
 
 // TriviaQuestion holds information about a single trivia question
@@ -71,6 +99,11 @@ func (s InMemoryTriviaStore) WriteQuestions(questions map[string]TriviaQuestion)
 
 // NewTriviaCommand creates a command that allows users to answer, get, and show trivia questions for the specified channel.
 func NewTriviaCommand(store TriviaStore, endpoint string, channelID string, w io.Writer, options ...CommandOption) cli.Command {
+	var categories string
+	for category := range categoryCodes() {
+		categories += fmt.Sprintf("%s\n", category)
+	}
+
 	client := rclient.NewRestClient(endpoint)
 	cmd := cli.Command{
 		Name:  "trivia",
@@ -115,11 +148,23 @@ func NewTriviaCommand(store TriviaStore, endpoint string, channelID string, w io
 						Value: "medium",
 						Usage: "the dificulty of the question; can be 'easy', 'medium', or 'hard'",
 					},
+					cli.StringFlag{
+						Name:  "category",
+						Usage: fmt.Sprintf("the category of the question; options are:\n%s", categories),
+					},
 				},
 				Action: func(c *cli.Context) error {
 					query := url.Values{}
 					query.Set("amount", "1")
 					query.Set("difficulty", c.String("difficulty"))
+					if category := c.String("category"); category != "" {
+						code, ok := categoryCodes()[category]
+						if !ok {
+							return fmt.Errorf("Unexpected category '%s'", category)
+						}
+
+						query.Set("category", strconv.Itoa(code))
+					}
 
 					var response OpenTDBResponse
 					if err := client.Get("", &response, rclient.Query(query)); err != nil {
